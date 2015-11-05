@@ -32,7 +32,7 @@ add_action('buddyforms_update_post_meta',10, 2);
 function buddyforms_cpt_onomies($customfield, $post_id){
     global $cpt_onomy;
 
-    if( $customfield['type'] == 'Taxonomy' ){
+    if( $customfield['type'] == 'taxonomy' ){
 
         $taxonomy = get_taxonomy($customfield['taxonomy']);
 
