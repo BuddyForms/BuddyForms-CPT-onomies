@@ -27,60 +27,70 @@
  ****************************************************************************
  */
 
-add_action('buddyforms_update_post_meta',10, 2);
+add_action( 'buddyforms_update_post_meta', 10, 2 );
 
-function buddyforms_cpt_onomies($customfield, $post_id){
-    global $cpt_onomy;
+function buddyforms_cpt_onomies( $customfield, $post_id ) {
+	global $cpt_onomy;
 
-    if( $customfield['type'] == 'taxonomy' ){
+	if ( $customfield['type'] == 'taxonomy' ) {
 
-        $taxonomy = get_taxonomy($customfield['taxonomy']);
+		$taxonomy = get_taxonomy( $customfield['taxonomy'] );
 
-        if (isset($taxonomy->hierarchical) && $taxonomy->hierarchical == true)  {
+		if ( isset( $taxonomy->hierarchical ) && $taxonomy->hierarchical == true ) {
 
-            if(isset($_POST[ $customfield['slug'] ]))
-                $tax_item = $_POST[ $customfield['slug'] ];
+			if ( isset( $_POST[ $customfield['slug'] ] ) ) {
+				$tax_item = $_POST[ $customfield['slug'] ];
+			}
 
-            if($tax_item[0] == -1 && !empty($customfield['taxonomy_default'])){
-                //$taxonomy_default = explode(',', $customfield['taxonomy_default'][0]);
-                foreach($customfield['taxonomy_default'] as $key => $tax){
-                    $tax_item[$key] = $tax;
-                }
-            }
+			if ( $tax_item[0] == - 1 && ! empty( $customfield['taxonomy_default'] ) ) {
+				//$taxonomy_default = explode(',', $customfield['taxonomy_default'][0]);
+				foreach ( $customfield['taxonomy_default'] as $key => $tax ) {
+					$tax_item[ $key ] = $tax;
+				}
+			}
 
-            if ($cpt_onomy){ $cpt_onomy->wp_set_post_terms( $post_id, $tax_item, $customfield['taxonomy'], false );}
-            else{ wp_set_post_terms( $post_id, $tax_item, $customfield['taxonomy'], false );}
+			if ( $cpt_onomy ) {
+				$cpt_onomy->wp_set_post_terms( $post_id, $tax_item, $customfield['taxonomy'], false );
+			} else {
+				wp_set_post_terms( $post_id, $tax_item, $customfield['taxonomy'], false );
+			}
 
-        } else {
+		} else {
 
-            $slug = Array();
+			$slug = Array();
 
-            if(isset($_POST[ $customfield['slug'] ])) {
-                $postCategories = $_POST[ $customfield['slug'] ];
+			if ( isset( $_POST[ $customfield['slug'] ] ) ) {
+				$postCategories = $_POST[ $customfield['slug'] ];
 
-                foreach ( $postCategories as $postCategory ) {
+				foreach ( $postCategories as $postCategory ) {
 
-                    if ($cpt_onomy){$term = $cpt_onomy->get_term_by('id', $postCategory, $customfield['taxonomy']);}
-                    else {$term = get_term_by('id', $postCategory, $customfield['taxonomy']);}
+					if ( $cpt_onomy ) {
+						$term = $cpt_onomy->get_term_by( 'id', $postCategory, $customfield['taxonomy'] );
+					} else {
+						$term = get_term_by( 'id', $postCategory, $customfield['taxonomy'] );
+					}
 
-                    $slug[] = $term->slug;
-                }
-            }
+					$slug[] = $term->slug;
+				}
+			}
 
-            if ($cpt_onomy){$cpt_onomy->wp_set_post_terms( $post_id, $slug, $customfield['taxonomy'], false );}
-            else{wp_set_post_terms( $post_id, $slug, $customfield['taxonomy'], false );}
+			if ( $cpt_onomy ) {
+				$cpt_onomy->wp_set_post_terms( $post_id, $slug, $customfield['taxonomy'], false );
+			} else {
+				wp_set_post_terms( $post_id, $slug, $customfield['taxonomy'], false );
+			}
 
-        }
+		}
 
-        if( isset( $_POST[$customfield['slug'].'_creat_new_tax']) && !empty($_POST[$customfield['slug'].'_creat_new_tax'] ) && !($cpt_onomy)){
-            $creat_new_tax =  explode(',',$_POST[$customfield['slug'].'_creat_new_tax']);
-            if(is_array($creat_new_tax)){
-                foreach($creat_new_tax as $key => $new_tax){
-                    $wp_insert_term = wp_insert_term($new_tax,$customfield['taxonomy']);
-                    wp_set_post_terms( $post_id, $wp_insert_term, $customfield['taxonomy'], true );
-                }
-            }
+		if ( isset( $_POST[ $customfield['slug'] . '_creat_new_tax' ] ) && ! empty( $_POST[ $customfield['slug'] . '_creat_new_tax' ] ) && ! ( $cpt_onomy ) ) {
+			$creat_new_tax = explode( ',', $_POST[ $customfield['slug'] . '_creat_new_tax' ] );
+			if ( is_array( $creat_new_tax ) ) {
+				foreach ( $creat_new_tax as $key => $new_tax ) {
+					$wp_insert_term = wp_insert_term( $new_tax, $customfield['taxonomy'] );
+					wp_set_post_terms( $post_id, $wp_insert_term, $customfield['taxonomy'], true );
+				}
+			}
 
-        }
-    }
+		}
+	}
 }
